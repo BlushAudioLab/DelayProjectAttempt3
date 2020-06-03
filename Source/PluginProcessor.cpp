@@ -24,6 +24,11 @@ DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
     mCircularBufferLength = 0.;
     mDelayTimeInSamples = 0.;
     mDelayReadHead = 0.;
+    
+    mFeedbackLeft = 0;
+    mFeedbackRight = 0;
+    
+    mDryWet = 0.5;
 
 }
 
@@ -164,8 +169,8 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
     
     for (int i = 0; i < buffer.getNumSamples(); i++) {
         
-        mCircularBufferLeft[mCircularBufferWriteHead] = leftChannel[i];
-        mCircularBufferRight[mCircularBufferWriteHead] = rightChannel[i];
+        mCircularBufferLeft[mCircularBufferWriteHead] = leftChannel[i] + mFeedbackLeft;
+        mCircularBufferRight[mCircularBufferWriteHead] = rightChannel[i] + mFeedbackRight;
         
         mDelayReadHead = mCircularBufferWriteHead - mDelayTimeInSamples;
         
@@ -173,11 +178,17 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
             mDelayReadHead += mCircularBufferLength;
         }
         
-        buffer.addSample(0, i, mCircularBufferLeft[(int)mDelayReadHead]);
-        buffer.addSample(1, i, mCircularBufferRight[(int)mDelayReadHead]);
-
+        float delay_sample_left = mCircularBufferLeft[(int)mDelayReadHead];
+        float delay_sample_right = mCircularBufferRight[(int)mDelayReadHead];
+        
+        mFeedbackLeft = delay_sample_left * 0.8;
+        mFeedbackRight = delay_sample_right * 0.8;
+        
         
         mCircularBufferWriteHead++;
+        
+        buffer.setSample(0, i, buffer.getSample(0, i) * mDryWet + delay_sample_left * (1 - mDryWet));
+        buffer.addSample(1, i, buffer.getSample(1, i) * mDryWet + delay_sample_right * (1 - mDryWet));
         
         if (mCircularBufferWriteHead >= mCircularBufferLength) {
             mCircularBufferWriteHead = 0;

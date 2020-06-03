@@ -65,7 +65,7 @@
           uiLastY_Normal="238" uiopen_Normal="0">
     <PLUGIN name="AUAudioFilePlayer" format="AudioUnit" category="Generator"
             manufacturer="Apple" version="1.6.0" file="AudioUnit:Generators/augn,afpl,appl"
-            uid="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="1727bf4edfc"
+            uid="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="1727c40fe74"
             numInputs="0" numOutputs="2" isShell="0"/>
     <STATE>582.hAGaoMGcv.C1AHv.DTfAGfPBJr.Gc3wGgvUag4VclE1XzUmbkIGUjEFcg8EDarVPUAkbkMWYzAUYxMWZyQWYtQ2TzEFcksTY4c0b0IFc4AWYWYWYxMWZu4FUzkGbk8EDOXVZrUVKxUlYkIWYtMVYyQkag0VYRDFbvwFPgxvzM3vCPDQFXYTZrUlSg0VYWIUYmk1atMmWIM2TkwVYiQWYjYTZrU1WPf0KV8Fa00VYy8hPrU2bnARP0QVZuARQ3QWYx4VXr8xTg0FbrU1bfrBHSEVavwVYf.UXis1buXTczUmbkARS0MWZiAxPDEyKF0TLfzBHTIWXisFHvjiK2ElcgJA0SPQEVbAFYngWRU1Yo8laD8VYywzauAmVRU1Yo8laDEFcg8EDPjzbSUFakMFckQlTkcVZu4lVRU1Yo8laNEVakgvSP.G...........K0wIP.....f4Q2...X....3WB...F...K0wIP.....f4Q2...X..P.8U2c.....D................................................................7LL.......InkSkcGHRU1Yo8laIHQXlAGaP.fDgU2YtEMHPXkQowVYfDCVU4FcoQGakQF.H.PF.XB.q.PR.DE.YAfW..G.0Afd.rG.8A.g.zH.UB.o.7e.ADfBAjQ.jDvMAHT.CEfsAba.BGvvAfb.JGvyAHc.YC.......HP..........HB..................Df3</STATE>
     <LAYOUT>
@@ -78,7 +78,7 @@
   <FILTER uid="8" x="0.445" y="0.4576923076923077">
     <PLUGIN name="DelayProjectAttempt" format="AudioUnit" category="Effect"
             manufacturer="Blush Audio" version="1.3.0" file="AudioUnit:Effects/aufx,Y3rh,Manu"
-            uid="75277a65" isInstrument="0" fileTime="0" infoUpdateTime="1727bf4edfc"
+            uid="75277a65" isInstrument="0" fileTime="0" infoUpdateTime="1727c40fe74"
             numInputs="2" numOutputs="2" isShell="0"/>
     <STATE>191.hAGaoMGcv.y0AHv.DTfAGfPBJHwDTTAWsEla0YVXiQWcxUlbTQVXzEFWkwVYsUlaz0hag0VYWMWchQWdvU1U1Ulbyk1atQEc4AWYT4VXsUlDMEla0AjzKvPCPDULQISzN7PTvTURtAWczEsCQX0S0QGb0QmDYMibnAA.RDVclgGVU4FcoQGakQFBWPRJ13iQKAUUVsUWeIFYp0Fc4sGf........AD..........V....................jH</STATE>
     <LAYOUT>
@@ -92,6 +92,5 @@
   </FILTER>
   <CONNECTION srcFilter="7" srcChannel="0" dstFilter="8" dstChannel="0"/>
   <CONNECTION srcFilter="7" srcChannel="1" dstFilter="8" dstChannel="1"/>
-  <CONNECTION srcFilter="8" srcChannel="0" dstFilter="3" dstChannel="0"/>
-  <CONNECTION srcFilter="8" srcChannel="1" dstFilter="3" dstChannel="1"/>
+  <CONNECTION srcFilter="8" srcChannel="1" dstFilter="3" dstChannel="0"/>
 </FILTERGRAPH>

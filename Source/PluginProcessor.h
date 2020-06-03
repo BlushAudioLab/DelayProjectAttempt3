@@ -59,6 +59,11 @@ public:
 
 private:
     
+    float mDryWet;
+    
+    float mFeedbackLeft;
+    float mFeedbackRight;
+    
     float mDelayTimeInSamples;
     float mDelayReadHead;
     
