@@ -13,21 +13,33 @@
 
 //==============================================================================
 DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
-                     #endif
-                       )
-#endif
+
+                       .withOutput ("Output", AudioChannelSet::stereo(), true))
 {
+    mCircularBufferLeft = nullptr;
+    mCircularBufferRight = nullptr;
+    mCircularBufferWriteHead = 0.;
+    mCircularBufferLength = 0.;
+    mDelayTimeInSamples = 0.;
+    mDelayReadHead = 0.;
+
 }
 
 DelayProjectAttempt3AudioProcessor::~DelayProjectAttempt3AudioProcessor()
 {
+    if (mCircularBufferLeft != nullptr){
+        delete [] mCircularBufferLeft;
+        mCircularBufferLeft = nullptr;
+    }
+    
+    if (mCircularBufferRight == nullptr){
+        delete [] mCircularBufferRight;
+        mCircularBufferRight = nullptr;
+        
+    }
+    
 }
 
 //==============================================================================
@@ -95,8 +107,21 @@ void DelayProjectAttempt3AudioProcessor::changeProgramName (int index, const Str
 //==============================================================================
 void DelayProjectAttempt3AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    
+    mDelayTimeInSamples = sampleRate * 0.5;
+    
+    mCircularBufferLength = sampleRate * MAX_DELAY_TIME;
+    
+    if (mCircularBufferLeft == nullptr){
+        mCircularBufferLeft = new float[mCircularBufferLength];
+    }
+    
+    if (mCircularBufferRight == nullptr){
+        mCircularBufferRight = new float[mCircularBufferLength];
+        
+    }
+    
+    mCircularBufferWriteHead = 0;
 }
 
 void DelayProjectAttempt3AudioProcessor::releaseResources()
@@ -108,24 +133,14 @@ void DelayProjectAttempt3AudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool DelayProjectAttempt3AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
-    return true;
-  #endif
+    if (layouts.getMainInputChannelSet() == AudioChannelSet::stereo() &&
+        layouts.getMainOutputChannelSet() == AudioChannelSet::stereo())
+{
+        return true;
+    }
+        else {
+                  return false;
+                   }
 }
 #endif
 
@@ -144,17 +159,29 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+    float* leftChannel = buffer.getWritePointer(0);
+    float* rightChannel = buffer.getWritePointer(1);
+    
+    for (int i = 0; i < buffer.getNumSamples(); i++) {
+        
+        mCircularBufferLeft[mCircularBufferWriteHead] = leftChannel[i];
+        mCircularBufferRight[mCircularBufferWriteHead] = rightChannel[i];
+        
+        mDelayReadHead = mCircularBufferWriteHead - mDelayTimeInSamples;
+        
+        if (mDelayReadHead < 0) {
+            mDelayReadHead += mCircularBufferLength;
+        }
+        
+        buffer.addSample(0, i, mCircularBufferLeft[(int)mDelayReadHead]);
+        buffer.addSample(1, i, mCircularBufferRight[(int)mDelayReadHead]);
 
-        // ..do something to the data...
+        
+        mCircularBufferWriteHead++;
+        
+        if (mCircularBufferWriteHead >= mCircularBufferLength) {
+            mCircularBufferWriteHead = 0;
+        }
     }
 }
 

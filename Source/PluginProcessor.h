@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 
+#define MAX_DELAY_TIME 2
+
 //==============================================================================
 /**
 */
@@ -56,6 +58,17 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    
+    float mDelayTimeInSamples;
+    float mDelayReadHead;
+    
+    int mCircularBufferWriteHead;
+    int mCircularBufferLength;
+    
+    float* mCircularBufferLeft;
+    float* mCircularBufferRight;
+
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttempt3AudioProcessor)
 };

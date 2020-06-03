@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="y3RHFC" name="DelayProjectAttempt3" projectType="audioplug"
-              jucerVersion="5.4.7" version="1.3.0" pluginManufacturer="Blush Audio"
-              pluginManufacturerCode="BLU">
-  <MAINGROUP id="XM3VId" name="DelayProjectAttempt3">
+<JUCERPROJECT id="y3RHFC" name="DelayProjectAttempt" projectType="audioplug"
+              jucerVersion="5.4.7" version="1.3.0" pluginManufacturer="Blush Audio">
+  <MAINGROUP id="XM3VId" name="DelayProjectAttempt">
     <GROUP id="{967D7AF8-DDD1-5405-9FDD-B78D7DA2EF32}" name="Source">
       <FILE id="ymAwsM" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
