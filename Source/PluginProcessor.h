@@ -59,8 +59,11 @@ public:
 
 private:
     
-    float mDryWet;
+    AudioParameterFloat* mDryWetParameter;
+    AudioParameterFloat* mFeedbackParameter;
+    AudioParameterFloat* mDelayTimeParameter;
     
+
     float mFeedbackLeft;
     float mFeedbackRight;
     

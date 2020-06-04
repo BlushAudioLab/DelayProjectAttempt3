@@ -31,5 +31,9 @@ private:
     // access the processor object that created it.
     DelayProjectAttempt3AudioProcessor& processor;
 
+    Slider mDryWetSlider;
+    Slider mFeedbackSlider;
+    Slider mDelayTimeSlider;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttempt3AudioProcessorEditor)
 };
