@@ -49,6 +49,7 @@ DelayProjectAttemptAudioProcessor::~DelayProjectAttemptAudioProcessor()
         mCircularBufferLeft = nullptr;
     }
     
+    zeromem(mCircularBufferLeft, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in left channel
     
     if (mCircularBufferRight != nullptr){
         delete [] mCircularBufferRight;
@@ -56,6 +57,7 @@ DelayProjectAttemptAudioProcessor::~DelayProjectAttemptAudioProcessor()
         
     }
     
+    zeromem(mCircularBufferRight, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in right channel
 }
 
 //==============================================================================
@@ -188,7 +190,7 @@ void DelayProjectAttemptAudioProcessor::processBlock (AudioBuffer<float>& buffer
         
         
         
-        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.005 * (mDelayTimeSmoothed - *mDelayTimeParameter);
+        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.001 * (mDelayTimeSmoothed - *mDelayTimeParameter);
         
         mDelayTimeInSamples = getSampleRate() * *mDelayTimeParameter;
         
@@ -216,11 +218,7 @@ void DelayProjectAttemptAudioProcessor::processBlock (AudioBuffer<float>& buffer
             readHead_x1 -= mCircularBufferLength;
         }
         
-      //  float delay_sample_left = *mCircularBufferLeft;
-         //float delay_sample_right = *mCircularBufferRight;
         
-        
-
         float delay_sample_left = lin_interp(mCircularBufferLeft[readHead_x], mCircularBufferLeft[readHead_x1], readHeadFloat);
         float delay_sample_right = lin_interp(mCircularBufferRight[readHead_x], mCircularBufferRight[readHead_x1], readHeadFloat);
         
