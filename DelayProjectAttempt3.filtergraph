@@ -61,13 +61,29 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="5" x="0.39" y="0.4423076923076923" uiLastX_Normal="84" uiLastY_Normal="418"
-          uiopen_Normal="0">
-    <PLUGIN name="DelayProjectAttempt3" format="VST3" category="Fx" manufacturer="Blush Audio"
-            version="1.3.0" file="/Users/blushaudiodev/Library/Audio/Plug-Ins/VST3/DelayProjectAttempt3.vst3"
-            uid="ae53b43b" isInstrument="0" fileTime="17271822015" infoUpdateTime="1727183c3c7"
+  <FILTER uid="7" x="0.37875" y="0.2423076923076923" uiLastX_Normal="330"
+          uiLastY_Normal="238" uiopen_Normal="0">
+    <PLUGIN name="AUAudioFilePlayer" format="AudioUnit" category="Generator"
+            manufacturer="Apple" version="1.6.0" file="AudioUnit:Generators/augn,afpl,appl"
+            uid="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="1727f99bf58"
+            numInputs="0" numOutputs="2" isShell="0"/>
+    <STATE>582.hAGaoMGcv.C1AHv.DTfAGfPBJr.Gc3wGgvUag4VclE1XzUmbkIGUjEFcg8EDarVPUAkbkMWYzAUYxMWZyQWYtQ2TzEFcksTY4c0b0IFc4AWYWYWYxMWZu4FUzkGbk8EDOXVZrUVKxUlYkIWYtMVYyQkag0VYRDFbvwFPgxvzM3vCPDwEXYTZrUlSg0VYWIUYmk1atMmWIM2TkwVYiQWYjYTZrU1WPf0KV8Fa00VYy8hPrU2bnARP0QVZuARQ3QWYx4VXr8xTg0FbrU1bfrBHSEVavwVYf.UXis1buXTczUmbkARS0MWZiAxPDEyKF0TLfzBHTIWXisFHvjiK2ElcgJA0SPQEVbAFWngWRU1Yo8laD8VYywzauAmVRU1Yo8laDEFcg8EDPjzbSUFakMFckQlTkcVZu4lVRU1Yo8laNEVakkvSP.G...........K0wIP.....f4Q2...X....3WB...F...K0wIP.....f4Q2...X..P.8U2c.....D................................................................7LL.......InkSkcGHRU1Yo8laIHQXlAGaP.fDgU2YtEMHPXkQowVYfDCVU4FcoQGakQF.H.PF.XB.q.PR.DE.YAfW..G.0Afd.rG.8A.g.zH.UB.o.7e.ADfBAjQ.jDvMAHT.CEfsAba.BGvvAfb.JGvyAHc.YC.......HP..........HB..................Df3</STATE>
+    <LAYOUT>
+      <INPUTS/>
+      <OUTPUTS>
+        <BUS index="0" layout="L R"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="8" x="0.445" y="0.4596153846153846" uiLastX_Normal="168"
+          uiLastY_Normal="273" uiopen_Normal="0" uiLastX_Generic="305"
+          uiLastY_Generic="360" uiopen_Generic="0" uiLastX_Programs="40"
+          uiLastY_Programs="60" uiopen_Programs="0">
+    <PLUGIN name="DelayProjectAttempt" format="AudioUnit" category="Effect"
+            manufacturer="Blush Audio" version="1.3.0" file="AudioUnit:Effects/aufx,Y3rh,Manu"
+            uid="75277a65" isInstrument="0" fileTime="0" infoUpdateTime="1727f99bf58"
             numInputs="2" numOutputs="2" isShell="0"/>
-    <STATE>191.VMjLgXK....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9XCLt3hKt3hKt3hKt3hYRUUSTEETIckVwTjQisVTTgkdEYjKAQjYPQSPWgUdMcjKAQjct3hdA4hKt3hKt3hKtnTUv.UQAslXuk0UXoWUFE0YQcEV77RRC8Vav8lak4Fc9vyKVMEUy.Ea0cVZtMEcgQWY9..</STATE>
+    <STATE>229.hAGaoMGcv.y0AHv.DTfAGfPBJHwDTTAWsEla0YVXiQWcxUlbTQVXzEFWkwVYsUlaz0hag0VYWMWchQWdvU1U1Ulbyk1atQEc4AWYT4VXsUlDMEla08DDj...............CDyHgu8O....jggjP2yvIZJcUtdg+H.m7J8BLz.DQESTxDsCODELUkjavUGcQ6PDV8TczAWczIQVyHGZP.fDgUmY3gUUtQWZzwVYjgvEjjhM9XzRPUEeANXgHpHjSp4mgZJ.......P.A.........fE....................uB</STATE>
     <LAYOUT>
       <INPUTS>
         <BUS index="0" layout="L R"/>
@@ -77,7 +93,8 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="5" dstChannel="0"/>
-  <CONNECTION srcFilter="5" srcChannel="0" dstFilter="3" dstChannel="0"/>
-  <CONNECTION srcFilter="5" srcChannel="0" dstFilter="3" dstChannel="1"/>
+  <CONNECTION srcFilter="7" srcChannel="0" dstFilter="8" dstChannel="0"/>
+  <CONNECTION srcFilter="7" srcChannel="1" dstFilter="8" dstChannel="1"/>
+  <CONNECTION srcFilter="8" srcChannel="0" dstFilter="3" dstChannel="0"/>
+  <CONNECTION srcFilter="8" srcChannel="1" dstFilter="3" dstChannel="1"/>
 </FILTERGRAPH>

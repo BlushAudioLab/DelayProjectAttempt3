@@ -13,21 +13,47 @@
 
 //==============================================================================
 DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
-                     #endif
-                       )
-#endif
+
+                       .withOutput ("Output", AudioChannelSet::stereo(), true))
 {
+    addParameter(mDryWetParameter = new AudioParameterFloat("drywet", "Dry Wet", 0.0, 1.0, 0.5));
+    
+    addParameter(mFeedbackParameter = new AudioParameterFloat("feedback", "Feedback Amount", 0.0, 0.98, 0.5));
+    
+    addParameter(mDelayTimeParameter = new AudioParameterFloat("delaytime", "Delay Time", 0.01, MAX_DELAY_TIME, 0.2));
+    
+    
+    mDelayTimeSmoothed = 0;
+    mCircularBufferLeft = nullptr;
+    mCircularBufferRight = nullptr;
+    mCircularBufferWriteHead = 0.;
+    mCircularBufferLength = 0.;
+    mDelayTimeInSamples = 0.;
+    mDelayReadHead = 0.;
+    
+    mFeedbackLeft = 0;
+    mFeedbackRight = 0;
+    
+    
+
 }
 
 DelayProjectAttempt3AudioProcessor::~DelayProjectAttempt3AudioProcessor()
 {
+    if (mCircularBufferLeft != nullptr){
+        delete [] mCircularBufferLeft;
+        mCircularBufferLeft = nullptr;
+    }
+    
+    
+    if (mCircularBufferRight != nullptr){
+        delete [] mCircularBufferRight;
+        mCircularBufferRight = nullptr;
+        
+    }
+    
 }
 
 //==============================================================================
@@ -95,8 +121,28 @@ void DelayProjectAttempt3AudioProcessor::changeProgramName (int index, const Str
 //==============================================================================
 void DelayProjectAttempt3AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    
+    mDelayTimeInSamples = sampleRate * *mDelayTimeParameter;
+    
+    mCircularBufferLength = sampleRate * MAX_DELAY_TIME;
+    
+   
+    
+    if (mCircularBufferLeft == nullptr){
+        mCircularBufferLeft = new float[mCircularBufferLength];
+    }
+        
+    zeromem(mCircularBufferLeft, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in left channel
+    
+    if (mCircularBufferRight == nullptr){
+        mCircularBufferRight = new float[mCircularBufferLength];
+    }
+    
+    zeromem(mCircularBufferRight, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in right channel
+    
+    mCircularBufferWriteHead = 0;
+    
+    mDelayTimeSmoothed = *mDelayTimeParameter;
 }
 
 void DelayProjectAttempt3AudioProcessor::releaseResources()
@@ -108,24 +154,14 @@ void DelayProjectAttempt3AudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool DelayProjectAttempt3AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
-    return true;
-  #endif
+    if (layouts.getMainInputChannelSet() == AudioChannelSet::stereo() &&
+        layouts.getMainOutputChannelSet() == AudioChannelSet::stereo())
+{
+        return true;
+    }
+        else {
+                  return false;
+                   }
 }
 #endif
 
@@ -144,17 +180,39 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
+    
+    float* leftChannel = buffer.getWritePointer(0);
+    float* rightChannel = buffer.getWritePointer(1);
+    
+    for (int i = 0; i < buffer.getNumSamples(); i++) {
+        
+        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.001 * (mDelayTimeSmoothed - *mDelayTimeParameter);
+        mDelayTimeInSamples = getSampleRate() * mDelayTimeSmoothed;
+        
+        mCircularBufferLeft[mCircularBufferWriteHead] = leftChannel[i] + mFeedbackLeft;
+        mCircularBufferRight[mCircularBufferWriteHead] = rightChannel[i] + mFeedbackRight;
+        
+        mDelayReadHead = mCircularBufferWriteHead - mDelayTimeInSamples;
+        
+        if (mDelayReadHead < 0) {
+            mDelayReadHead += mCircularBufferLength;
+        }
+        
+        float delay_sample_left = mCircularBufferLeft[(int)mDelayReadHead];
+        float delay_sample_right = mCircularBufferRight[(int)mDelayReadHead];
+        
+        mFeedbackLeft = delay_sample_left * *mFeedbackParameter;
+        mFeedbackRight = delay_sample_right * *mFeedbackParameter;
+        
+        
+        mCircularBufferWriteHead++;
+        
+        buffer.setSample(0, i, buffer.getSample(0, i) * (1 - *mDryWetParameter) + delay_sample_left * *mDryWetParameter);
+        buffer.setSample(1, i, buffer.getSample(1, i) * (1 - *mDryWetParameter) + delay_sample_right * *mDryWetParameter);
+        
+        if (mCircularBufferWriteHead >= mCircularBufferLength) {
+            mCircularBufferWriteHead = 0;
+        }
     }
 }
 
