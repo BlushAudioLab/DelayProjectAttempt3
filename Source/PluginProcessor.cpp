@@ -49,15 +49,12 @@ DelayProjectAttemptAudioProcessor::~DelayProjectAttemptAudioProcessor()
         mCircularBufferLeft = nullptr;
     }
     
-    zeromem(mCircularBufferLeft, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in left channel
-    
+ 
     if (mCircularBufferRight != nullptr){
         delete [] mCircularBufferRight;
         mCircularBufferRight = nullptr;
         
     }
-    
-    zeromem(mCircularBufferRight, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in right channel
 }
 
 //==============================================================================
@@ -141,6 +138,8 @@ void DelayProjectAttemptAudioProcessor::prepareToPlay (double sampleRate, int sa
     if (mCircularBufferRight == nullptr){
         mCircularBufferRight = new float[mCircularBufferLength];
     }
+    
+     zeromem(mCircularBufferRight, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in right channel
     
     mCircularBufferWriteHead = 0;
     
