@@ -16,11 +16,11 @@
 //==============================================================================
 /**
 */
-class DelayProjectAttempt3AudioProcessorEditor  : public AudioProcessorEditor
+class DelayProjectAttemptAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
-    DelayProjectAttempt3AudioProcessorEditor (DelayProjectAttempt3AudioProcessor&);
-    ~DelayProjectAttempt3AudioProcessorEditor();
+    DelayProjectAttemptAudioProcessorEditor (DelayProjectAttemptAudioProcessor&);
+    ~DelayProjectAttemptAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -29,11 +29,11 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    DelayProjectAttempt3AudioProcessor& processor;
+    DelayProjectAttemptAudioProcessor& processor;
 
     Slider mDryWetSlider;
     Slider mFeedbackSlider;
     Slider mDelayTimeSlider;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttempt3AudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttemptAudioProcessorEditor)
 };

@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DelayProjectAttempt3AudioProcessorEditor::DelayProjectAttempt3AudioProcessorEditor (DelayProjectAttempt3AudioProcessor& p)
+DelayProjectAttemptAudioProcessorEditor::DelayProjectAttemptAudioProcessorEditor (DelayProjectAttemptAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -70,12 +70,12 @@ DelayProjectAttempt3AudioProcessorEditor::DelayProjectAttempt3AudioProcessorEdit
     Slider mDelayTimeSlider;
 }
 
-DelayProjectAttempt3AudioProcessorEditor::~DelayProjectAttempt3AudioProcessorEditor()
+DelayProjectAttemptAudioProcessorEditor::~DelayProjectAttemptAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void DelayProjectAttempt3AudioProcessorEditor::paint (Graphics& g)
+void DelayProjectAttemptAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
@@ -85,7 +85,7 @@ void DelayProjectAttempt3AudioProcessorEditor::paint (Graphics& g)
     g.drawFittedText ("Wilson Guitars", getLocalBounds(), Justification::centred, 1);
 }
 
-void DelayProjectAttempt3AudioProcessorEditor::resized()
+void DelayProjectAttemptAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..

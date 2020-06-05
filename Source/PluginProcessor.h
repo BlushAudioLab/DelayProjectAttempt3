@@ -17,12 +17,12 @@
 //==============================================================================
 /**
 */
-class DelayProjectAttempt3AudioProcessor  : public AudioProcessor
+class DelayProjectAttemptAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    DelayProjectAttempt3AudioProcessor();
-    ~DelayProjectAttempt3AudioProcessor();
+    DelayProjectAttemptAudioProcessor();
+    ~DelayProjectAttemptAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -83,5 +83,7 @@ private:
 
     
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttempt3AudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttemptAudioProcessor)
 };
+
+

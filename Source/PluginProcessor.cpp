@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
+DelayProjectAttemptAudioProcessor::DelayProjectAttemptAudioProcessor()
      : AudioProcessor (BusesProperties()
                        .withInput  ("Input",  AudioChannelSet::stereo(), true)
 
@@ -42,7 +42,7 @@ DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
 
 }
 
-DelayProjectAttempt3AudioProcessor::~DelayProjectAttempt3AudioProcessor()
+DelayProjectAttemptAudioProcessor::~DelayProjectAttemptAudioProcessor()
 {
     if (mCircularBufferLeft != nullptr){
         delete [] mCircularBufferLeft;
@@ -59,12 +59,12 @@ DelayProjectAttempt3AudioProcessor::~DelayProjectAttempt3AudioProcessor()
 }
 
 //==============================================================================
-const String DelayProjectAttempt3AudioProcessor::getName() const
+const String DelayProjectAttemptAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool DelayProjectAttempt3AudioProcessor::acceptsMidi() const
+bool DelayProjectAttemptAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -73,7 +73,7 @@ bool DelayProjectAttempt3AudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool DelayProjectAttempt3AudioProcessor::producesMidi() const
+bool DelayProjectAttemptAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -82,7 +82,7 @@ bool DelayProjectAttempt3AudioProcessor::producesMidi() const
    #endif
 }
 
-bool DelayProjectAttempt3AudioProcessor::isMidiEffect() const
+bool DelayProjectAttemptAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -91,37 +91,37 @@ bool DelayProjectAttempt3AudioProcessor::isMidiEffect() const
    #endif
 }
 
-double DelayProjectAttempt3AudioProcessor::getTailLengthSeconds() const
+double DelayProjectAttemptAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int DelayProjectAttempt3AudioProcessor::getNumPrograms()
+int DelayProjectAttemptAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int DelayProjectAttempt3AudioProcessor::getCurrentProgram()
+int DelayProjectAttemptAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void DelayProjectAttempt3AudioProcessor::setCurrentProgram (int index)
+void DelayProjectAttemptAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String DelayProjectAttempt3AudioProcessor::getProgramName (int index)
+const String DelayProjectAttemptAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void DelayProjectAttempt3AudioProcessor::changeProgramName (int index, const String& newName)
+void DelayProjectAttemptAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void DelayProjectAttempt3AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void DelayProjectAttemptAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     
     mDelayTimeInSamples = sampleRate * *mDelayTimeParameter;
@@ -144,14 +144,14 @@ void DelayProjectAttempt3AudioProcessor::prepareToPlay (double sampleRate, int s
     mDelayTimeSmoothed = *mDelayTimeParameter;
 }
 
-void DelayProjectAttempt3AudioProcessor::releaseResources()
+void DelayProjectAttemptAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool DelayProjectAttempt3AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool DelayProjectAttemptAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     if (layouts.getMainInputChannelSet() == AudioChannelSet::stereo() &&
         layouts.getMainOutputChannelSet() == AudioChannelSet::stereo())
@@ -164,7 +164,7 @@ bool DelayProjectAttempt3AudioProcessor::isBusesLayoutSupported (const BusesLayo
 }
 #endif
 
-void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void DelayProjectAttemptAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -184,6 +184,8 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
     
     
     for (int i = 0; i < buffer.getNumSamples(); i++) {
+        
+        
         
         mDelayTimeSmoothed = mDelayTimeSmoothed - 0.001 * (mDelayTimeSmoothed - *mDelayTimeParameter);
         
@@ -238,25 +240,25 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
 }
 
 //==============================================================================
-bool DelayProjectAttempt3AudioProcessor::hasEditor() const
+bool DelayProjectAttemptAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* DelayProjectAttempt3AudioProcessor::createEditor()
+AudioProcessorEditor* DelayProjectAttemptAudioProcessor::createEditor()
 {
-    return new DelayProjectAttempt3AudioProcessorEditor (*this);
+    return new DelayProjectAttemptAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void DelayProjectAttempt3AudioProcessor::getStateInformation (MemoryBlock& destData)
+void DelayProjectAttemptAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void DelayProjectAttempt3AudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void DelayProjectAttemptAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -266,7 +268,7 @@ void DelayProjectAttempt3AudioProcessor::setStateInformation (const void* data, 
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new DelayProjectAttempt3AudioProcessor();
+    return new DelayProjectAttemptAudioProcessor();
 }
 
 float lin_interp(float sample_x, float sample_x1, float inPhase)
