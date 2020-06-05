@@ -25,7 +25,7 @@ DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
     addParameter(mDelayTimeParameter = new AudioParameterFloat("delaytime", "Delay Time", 0.01, MAX_DELAY_TIME, 0.2));
     
     
-    
+    mDelayTimeSmoothed = 0;
     mCircularBufferLeft = nullptr;
     mCircularBufferRight = nullptr;
     mCircularBufferWriteHead = 0.;
@@ -132,13 +132,17 @@ void DelayProjectAttempt3AudioProcessor::prepareToPlay (double sampleRate, int s
         mCircularBufferLeft = new float[mCircularBufferLength];
     }
         
+    zeromem(mCircularBufferLeft, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in left channel
+    
     if (mCircularBufferRight == nullptr){
         mCircularBufferRight = new float[mCircularBufferLength];
-        
     }
     
+    zeromem(mCircularBufferRight, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in right channel
     
     mCircularBufferWriteHead = 0;
+    
+    mDelayTimeSmoothed = *mDelayTimeParameter;
 }
 
 void DelayProjectAttempt3AudioProcessor::releaseResources()
@@ -176,12 +180,14 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    mDelayTimeInSamples = getSampleRate() * *mDelayTimeParameter;
     
     float* leftChannel = buffer.getWritePointer(0);
     float* rightChannel = buffer.getWritePointer(1);
     
     for (int i = 0; i < buffer.getNumSamples(); i++) {
+        
+        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.001 * (mDelayTimeSmoothed - *mDelayTimeParameter);
+        mDelayTimeInSamples = getSampleRate() * mDelayTimeSmoothed;
         
         mCircularBufferLeft[mCircularBufferWriteHead] = leftChannel[i] + mFeedbackLeft;
         mCircularBufferRight[mCircularBufferWriteHead] = rightChannel[i] + mFeedbackRight;
@@ -202,7 +208,7 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
         mCircularBufferWriteHead++;
         
         buffer.setSample(0, i, buffer.getSample(0, i) * (1 - *mDryWetParameter) + delay_sample_left * *mDryWetParameter);
-        buffer.addSample(1, i, buffer.getSample(1, i) * (1 - *mDryWetParameter) + delay_sample_right * *mDryWetParameter);
+        buffer.setSample(1, i, buffer.getSample(1, i) * (1 - *mDryWetParameter) + delay_sample_right * *mDryWetParameter);
         
         if (mCircularBufferWriteHead >= mCircularBufferLength) {
             mCircularBufferWriteHead = 0;
