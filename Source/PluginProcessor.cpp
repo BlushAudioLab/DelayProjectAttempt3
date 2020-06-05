@@ -25,7 +25,7 @@ DelayProjectAttemptAudioProcessor::DelayProjectAttemptAudioProcessor()
     addParameter(mDelayTimeParameter = new AudioParameterFloat("delaytime", "Delay Time", 0.01, MAX_DELAY_TIME, 0.2));
     
     
-    
+    mDelayTimeSmoothed = 0;
     mCircularBufferLeft = nullptr;
     mCircularBufferRight = nullptr;
     mCircularBufferWriteHead = 0.;
@@ -134,9 +134,10 @@ void DelayProjectAttemptAudioProcessor::prepareToPlay (double sampleRate, int sa
         mCircularBufferLeft = new float[mCircularBufferLength];
     }
         
+    zeromem(mCircularBufferLeft, mCircularBufferLength * sizeof(float)); //setting all the bytes to zero in left channel
+    
     if (mCircularBufferRight == nullptr){
         mCircularBufferRight = new float[mCircularBufferLength];
-        
     }
     
     mCircularBufferWriteHead = 0;
