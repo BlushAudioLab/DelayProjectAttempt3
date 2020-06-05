@@ -187,7 +187,7 @@ void DelayProjectAttemptAudioProcessor::processBlock (AudioBuffer<float>& buffer
         
         
         
-        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.001 * (mDelayTimeSmoothed - *mDelayTimeParameter);
+        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.005 * (mDelayTimeSmoothed - *mDelayTimeParameter);
         
         mDelayTimeInSamples = getSampleRate() * *mDelayTimeParameter;
         
@@ -271,7 +271,7 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new DelayProjectAttemptAudioProcessor();
 }
 
-float lin_interp(float sample_x, float sample_x1, float inPhase)
+float DelayProjectAttemptAudioProcessor::lin_interp(float sample_x, float sample_x1, float inPhase)
 {
   return (1 - inPhase) * sample_x + inPhase * sample_x1;
 }
