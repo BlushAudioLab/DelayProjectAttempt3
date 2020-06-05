@@ -57,7 +57,12 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    float lin_interp(float sample_x, float sample_x1, float inPhase); //linear interpolation for delay parameter
+
+    
 private:
+    
+    float mDelayTimeSmoothed;
     
     AudioParameterFloat* mDryWetParameter;
     AudioParameterFloat* mFeedbackParameter;

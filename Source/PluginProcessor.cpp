@@ -36,6 +36,8 @@ DelayProjectAttempt3AudioProcessor::DelayProjectAttempt3AudioProcessor()
     mFeedbackLeft = 0;
     mFeedbackRight = 0;
     
+    mDelayTimeSmoothed = 0;
+    
     
 
 }
@@ -137,8 +139,9 @@ void DelayProjectAttempt3AudioProcessor::prepareToPlay (double sampleRate, int s
         
     }
     
-    
     mCircularBufferWriteHead = 0;
+    
+    mDelayTimeSmoothed = *mDelayTimeParameter;
 }
 
 void DelayProjectAttempt3AudioProcessor::releaseResources()
@@ -175,13 +178,16 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    mDelayTimeInSamples = getSampleRate() * *mDelayTimeParameter;
     
     float* leftChannel = buffer.getWritePointer(0);
     float* rightChannel = buffer.getWritePointer(1);
     
+    
     for (int i = 0; i < buffer.getNumSamples(); i++) {
+        
+        mDelayTimeSmoothed = mDelayTimeSmoothed - 0.001 * (mDelayTimeSmoothed - *mDelayTimeParameter);
+        
+        mDelayTimeInSamples = getSampleRate() * *mDelayTimeParameter;
         
         mCircularBufferLeft[mCircularBufferWriteHead] = leftChannel[i] + mFeedbackLeft;
         mCircularBufferRight[mCircularBufferWriteHead] = rightChannel[i] + mFeedbackRight;
@@ -192,8 +198,29 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
             mDelayReadHead += mCircularBufferLength;
         }
         
-        float delay_sample_left = mCircularBufferLeft[(int)mDelayReadHead];
-        float delay_sample_right = mCircularBufferRight[(int)mDelayReadHead];
+        int readHead_x = (int)mDelayReadHead; //casting the read head value as an integer
+        
+        int readHead_x1 = readHead_x + 1; // getting the next index in the array for the readhead
+        
+        
+        
+        
+        
+        float readHeadFloat = mDelayReadHead - readHead_x; // we are now subtracting the integer version of the read head from the original floating point version
+        
+        /*now we make sure that the next sample is not at the end of the read head*/
+        if (readHead_x1 >= mCircularBufferLength){
+            readHead_x1 -= mCircularBufferLength;
+        }
+        
+      //  float delay_sample_left = *mCircularBufferLeft;
+         //float delay_sample_right = *mCircularBufferRight;
+        
+        
+
+        float delay_sample_left = lin_interp(mCircularBufferLeft[readHead_x], mCircularBufferLeft[readHead_x1], readHeadFloat);
+        float delay_sample_right = lin_interp(mCircularBufferRight[readHead_x], mCircularBufferRight[readHead_x1], readHeadFloat);
+        
         
         mFeedbackLeft = delay_sample_left * *mFeedbackParameter;
         mFeedbackRight = delay_sample_right * *mFeedbackParameter;
@@ -202,7 +229,7 @@ void DelayProjectAttempt3AudioProcessor::processBlock (AudioBuffer<float>& buffe
         mCircularBufferWriteHead++;
         
         buffer.setSample(0, i, buffer.getSample(0, i) * (1 - *mDryWetParameter) + delay_sample_left * *mDryWetParameter);
-        buffer.addSample(1, i, buffer.getSample(1, i) * (1 - *mDryWetParameter) + delay_sample_right * *mDryWetParameter);
+        buffer.setSample(1, i, buffer.getSample(1, i) * (1 - *mDryWetParameter) + delay_sample_right * *mDryWetParameter);
         
         if (mCircularBufferWriteHead >= mCircularBufferLength) {
             mCircularBufferWriteHead = 0;
@@ -240,4 +267,9 @@ void DelayProjectAttempt3AudioProcessor::setStateInformation (const void* data, 
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new DelayProjectAttempt3AudioProcessor();
+}
+
+float lin_interp(float sample_x, float sample_x1, float inPhase)
+{
+  return (1 - inPhase) * sample_x + inPhase * sample_x1;
 }
