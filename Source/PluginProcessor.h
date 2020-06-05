@@ -17,12 +17,12 @@
 //==============================================================================
 /**
 */
-class DelayProjectAttempt3AudioProcessor  : public AudioProcessor
+class DelayProjectAttemptAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    DelayProjectAttempt3AudioProcessor();
-    ~DelayProjectAttempt3AudioProcessor();
+    DelayProjectAttemptAudioProcessor();
+    ~DelayProjectAttemptAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -57,6 +57,9 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    float lin_interp(float sample_x, float sample_x1, float inPhase); //linear interpolation for delay parameter
+
+    
 private:
     
     float mDelayTimeSmoothed;
@@ -80,5 +83,7 @@ private:
 
     
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttempt3AudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayProjectAttemptAudioProcessor)
 };
+
+
